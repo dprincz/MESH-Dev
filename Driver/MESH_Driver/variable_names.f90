@@ -66,12 +66,17 @@ module variable_names
     !> Canopy variables.
     character(len = *), parameter :: VN_LQWSCAN = 'LQWSCAN'
     character(len = *), parameter :: VN_FZWSCAN = 'FZWSCAN'
+    character(len = *), parameter :: VN_EVPCAN = 'EVPCAN'
+    character(len = *), parameter :: VN_SUBLCAN = 'SUBLCAN'
     character(len = *), parameter :: VN_CMAS = 'CMAS'
     character(len = *), parameter :: VN_TCAN = 'TCAN'
+    character(len = *), parameter :: VN_TRROOT = 'TRROOT'
     character(len = *), parameter :: VN_GRO = 'GRO'
+    character(len = *), parameter :: VN_DRAINCAN = 'DRAINCAN'
 
     !> Snow variables.
     character(len = *), parameter :: VN_FSNO = 'FSNO'
+    character(len = *), parameter :: VN_SUBLSNO = 'SUBLSNO'
     character(len = *), parameter :: VN_SNO = 'SNO'
     character(len = *), parameter :: VN_RHOSNO = 'RHOSNO'
     character(len = *), parameter :: VN_ZSNO = 'ZSNO'
@@ -91,6 +96,7 @@ module variable_names
     character(len = *), parameter :: VN_PNDCAF = 'PNDCAF'
     character(len = *), parameter :: VN_POTEVP = 'POTEVP'
     character(len = *), parameter :: VN_ET = 'ET'
+    character(len = *), parameter :: VN_EVPSURF = 'EVPSURF'
     character(len = *), parameter :: VN_EVPB = 'EVPB'
     character(len = *), parameter :: VN_ARRD = 'ARRD'
     character(len = *), parameter :: VN_OVRFLW = 'OVRFLW'

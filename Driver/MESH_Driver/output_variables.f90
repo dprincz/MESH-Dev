@@ -37,13 +37,18 @@ module output_variables
         real, dimension(:), pointer :: ican => null()
         real, dimension(:), pointer :: lqwscan => null()
         real, dimension(:), pointer :: fzwscan => null()
+        real, dimension(:), pointer :: evpcan => null()
+        real, dimension(:), pointer :: sublcan => null()
         real, dimension(:), pointer :: cmas => null()
         real, dimension(:), pointer :: tcan => null()
+        real, dimension(:), pointer :: trroot => null()
         real, dimension(:), pointer :: gro => null()
+        real, dimension(:), pointer :: draincan => null()
 
         !> Snow variables.
         real, dimension(:), pointer :: isno => null()
         real, dimension(:), pointer :: fsno => null()
+        real, dimension(:), pointer :: sublsno => null()
         real, dimension(:), pointer :: sno => null()
         real, dimension(:), pointer :: rhosno => null()
         real, dimension(:), pointer :: zsno => null()
@@ -64,6 +69,7 @@ module output_variables
         real, dimension(:), pointer :: pndcaf => null()
         real, dimension(:), pointer :: potevp => null()
         real, dimension(:), pointer :: et => null()
+        real, dimension(:), pointer :: evpsurf => null()
         real, dimension(:), pointer :: evpb => null()
         real, dimension(:), pointer :: arrd => null()
         real, dimension(:), pointer :: ovrflw => null()
@@ -392,6 +398,22 @@ module output_variables
                 end if
                 call output_variables_allocate(fields%fzwscan, n1, pntr)
                 if (associated(fields%ts)) call output_variables_allocate(fields%ts%fzwscan, n1)
+            case (VN_EVPCAN)
+                call output_variables_activate_pntr(fields, VN_TCAN)
+                if (.not. allocated(fields%vs%evpcan)) then
+                    allocate(fields%vs%evpcan(fields%vs%dim_length))
+                    fields%vs%evpcan = huge(fields%vs%evpcan)
+                end if
+                call output_variables_allocate(fields%evpcan, n1, pntr)
+                if (associated(fields%ts)) call output_variables_allocate(fields%ts%lqwscan, n1)
+            case (VN_SUBLCAN)
+                call output_variables_activate_pntr(fields, VN_TCAN)
+                if (.not. allocated(fields%vs%sublcan)) then
+                    allocate(fields%vs%sublcan(fields%vs%dim_length))
+                    fields%vs%sublcan = huge(fields%vs%sublcan)
+                end if
+                call output_variables_allocate(fields%sublcan, n1, pntr)
+                if (associated(fields%ts)) call output_variables_allocate(fields%ts%fzwscan, n1)
             case (VN_CMAS)
                 call output_variables_activate_pntr(fields, VN_TCAN)
                 if (.not. allocated(fields%vs%cmas)) then
@@ -409,6 +431,14 @@ module output_variables
                 if (associated(fields%ts)) call output_variables_allocate(fields%ts%tcan, n1)
                 call output_variables_allocate(fields%ican, n1)
                 if (associated(fields%ts)) call output_variables_allocate(fields%ts%ican, n1)
+            case (VN_TRROOT)
+                call output_variables_activate_pntr(fields, VN_TCAN)
+                if (.not. allocated(fields%vs%trroot)) then
+                    allocate(fields%vs%trroot(fields%vs%dim_length))
+                    fields%vs%trroot = huge(fields%vs%trroot)
+                end if
+                call output_variables_allocate(fields%trroot, n1, pntr)
+                if (associated(fields%ts)) call output_variables_allocate(fields%ts%trroot, n1)
             case (VN_GRO)
                 call output_variables_activate_pntr(fields, VN_TCAN)
                 if (.not. allocated(fields%vs%gro)) then
@@ -417,6 +447,14 @@ module output_variables
                 end if
                 call output_variables_allocate(fields%gro, n1, pntr)
                 if (associated(fields%ts)) call output_variables_allocate(fields%ts%gro, n1)
+            case (VN_DRAINCAN)
+                call output_variables_activate_pntr(fields, VN_TCAN)
+                if (.not. allocated(fields%vs%draincan)) then
+                    allocate(fields%vs%draincan(fields%vs%dim_length))
+                    fields%vs%draincan = huge(fields%vs%draincan)
+                end if
+                call output_variables_allocate(fields%draincan, n1, pntr)
+                if (associated(fields%ts)) call output_variables_allocate(fields%ts%draincan, n1)
 
             !> Snow variables.
             case (VN_FSNO)
@@ -427,6 +465,14 @@ module output_variables
                 end if
                 call output_variables_allocate(fields%fsno, n1, pntr)
                 if (associated(fields%ts)) call output_variables_allocate(fields%ts%fsno, n1)
+            case (VN_SUBLSNO)
+                call output_variables_activate_pntr(fields, VN_SNO)
+                if (.not. allocated(fields%vs%sublsno)) then
+                    allocate(fields%vs%sublsno(fields%vs%dim_length))
+                    fields%vs%sublsno = huge(fields%vs%sublsno)
+                end if
+                call output_variables_allocate(fields%sublsno, n1, pntr)
+                if (associated(fields%ts)) call output_variables_allocate(fields%ts%sublsno, n1)
             case (VN_SNO)
                 if (.not. allocated(fields%vs%sno)) then
                     allocate(fields%vs%sno(fields%vs%dim_length))
@@ -543,6 +589,13 @@ module output_variables
                 end if
                 call output_variables_allocate(fields%et, n1, pntr)
                 if (associated(fields%ts)) call output_variables_allocate(fields%ts%et, n1)
+            case (VN_EVPSURF)
+                if (.not. allocated(fields%vs%evpsurf)) then
+                    allocate(fields%vs%evpsurf(fields%vs%dim_length))
+                    fields%vs%evpsurf = huge(fields%vs%evpsurf)
+                end if
+                call output_variables_allocate(fields%evpsurf, n1, pntr)
+                if (associated(fields%ts)) call output_variables_allocate(fields%ts%evpsurf, n1)
             case (VN_EVPB)
                 call output_variables_activate_pntr(fields, VN_ET)
                 call output_variables_activate_pntr(fields, VN_POTEVP)
@@ -890,13 +943,18 @@ module output_variables
         if (associated(group%ican)) group%ican = 0.0
         if (associated(group%lqwscan)) group%lqwscan = out%NO_DATA
         if (associated(group%fzwscan)) group%fzwscan = out%NO_DATA
+        if (associated(group%evpcan)) group%evpcan = out%NO_DATA
+        if (associated(group%sublcan)) group%sublcan = out%NO_DATA
         if (associated(group%cmas)) group%cmas = out%NO_DATA
         if (associated(group%tcan)) group%tcan = out%NO_DATA
+        if (associated(group%trroot)) group%trroot = out%NO_DATA
         if (associated(group%gro)) group%gro = out%NO_DATA
+        if (associated(group%draincan)) group%draincan = out%NO_DATA
 
         !> Snow variables.
         if (associated(group%isno)) group%isno = 0.0
         if (associated(group%fsno)) group%fsno = out%NO_DATA
+        if (associated(group%sublsno)) group%sublsno = out%NO_DATA
         if (associated(group%sno)) group%sno = out%NO_DATA
         if (associated(group%rhosno)) group%rhosno = out%NO_DATA
         if (associated(group%zsno)) group%zsno = out%NO_DATA
@@ -917,6 +975,7 @@ module output_variables
         if (associated(group%pndcaf)) group%pndcaf = out%NO_DATA
         if (associated(group%potevp)) group%potevp = out%NO_DATA
         if (associated(group%et)) group%et = out%NO_DATA
+        if (associated(group%evpsurf)) group%evpsurf = out%NO_DATA
         if (associated(group%evpb)) group%evpb = out%NO_DATA
         if (associated(group%arrd)) group%arrd = out%NO_DATA
         if (associated(group%ovrflw)) group%ovrflw = out%NO_DATA
@@ -1284,6 +1343,32 @@ module output_variables
                 end if
             end if
         end if
+        if (associated(group%evpcan)) then
+            if (all(group%evpcan == out%NO_DATA)) then
+                if (all(group_vs%evpcan /= huge(group_vs%evpcan))) then
+                    where (group%ican == 1.0)
+                        group%evpcan = group_vs%evpcan
+                    elsewhere
+                        group%evpcan = 0.0
+                    end where
+                else
+                    group%evpcan = 0.0
+                end if
+            end if
+        end if
+        if (associated(group%sublcan)) then
+            if (all(group%sublcan == out%NO_DATA)) then
+                if (all(group_vs%sublcan /= huge(group_vs%sublcan))) then
+                    where (group%ican == 1.0)
+                        group%sublcan = group_vs%sublcan
+                    elsewhere
+                        group%sublcan = 0.0
+                    end where
+                else
+                    group%sublcan = 0.0
+                end if
+            end if
+        end if
         if (associated(group%cmas)) then
             if (all(group%cmas == out%NO_DATA)) then
                 if (all(group_vs%cmas /= huge(group_vs%cmas))) then
@@ -1297,6 +1382,19 @@ module output_variables
                 end if
             end if
         end if
+        if (associated(group%trroot)) then
+            if (all(group%trroot == out%NO_DATA)) then
+                if (all(group_vs%trroot /= huge(group_vs%trroot))) then
+                    where (group%ican == 1.0)
+                        group%trroot = group_vs%trroot
+                    elsewhere
+                        group%trroot = 0.0
+                    end where
+                else
+                    group%trroot = 0.0
+                end if
+            end if
+        end if
         if (associated(group%gro)) then
             if (all(group%gro == out%NO_DATA)) then
                 if (all(group_vs%gro /= huge(group_vs%gro))) then
@@ -1307,6 +1405,19 @@ module output_variables
                     end where
                 else
                     group%gro = 0.0
+                end if
+            end if
+        end if
+        if (associated(group%draincan)) then
+            if (all(group%draincan == out%NO_DATA)) then
+                if (all(group_vs%draincan /= huge(group_vs%draincan))) then
+                    where (group%ican == 1.0)
+                        group%draincan = group_vs%draincan
+                    elsewhere
+                        group%draincan = 0.0
+                    end where
+                else
+                    group%draincan = 0.0
                 end if
             end if
         end if
@@ -1329,6 +1440,19 @@ module output_variables
                     end where
                 else
                     group%fsno = 0.0
+                end if
+            end if
+        end if
+        if (associated(group%sublsno)) then
+            if (all(group%sublsno == out%NO_DATA)) then
+                if (all(group_vs%sublsno /= huge(group_vs%sublsno))) then
+                    where (group%isno == 1.0)
+                        group%sublsno = group_vs%sublsno
+                    elsewhere
+                        group%sublsno = 0.0
+                    end where
+                else
+                    group%sublsno = 0.0
                 end if
             end if
         end if
@@ -1523,6 +1647,15 @@ module output_variables
                     group%et = group_vs%et
                 else
                     group%et = 0.0
+                end if
+            end if
+        end if
+        if (associated(group%evpsurf)) then
+            if (all(group%evpsurf == out%NO_DATA)) then
+                if (all(group_vs%evpsurf /= huge(group_vs%evpsurf))) then
+                    group%evpsurf = group_vs%evpsurf
+                else
+                    group%evpsurf = 0.0
                 end if
             end if
         end if
@@ -2053,14 +2186,26 @@ module output_variables
         if (associated(group%fzwscan)) then
             call output_variables_field_update(group%fzwscan, group_ts%fzwscan, its, 'avg')
         end if
+        if (associated(group%evpcan)) then
+            call output_variables_field_update(group%evpcan, group_ts%evpcan, its, 'avg')
+        end if
+        if (associated(group%sublcan)) then
+            call output_variables_field_update(group%sublcan, group_ts%sublcan, its, 'avg')
+        end if
         if (associated(group%cmas)) then
             call output_variables_field_icount_average(group%cmas, group_ts%cmas, group%ican, group_ts%ican)
         end if
         if (associated(group%tcan)) then
             call output_variables_field_icount_average(group%tcan, group_ts%tcan, group%ican, group_ts%ican)
         end if
+        if (associated(group%trroot)) then
+            call output_variables_field_update(group%trroot, group_ts%trroot, its, 'avg')
+        end if
         if (associated(group%gro)) then
             call output_variables_field_update(group%gro, group_ts%gro, its, 'avg')
+        end if
+        if (associated(group%draincan)) then
+            call output_variables_field_update(group%draincan, group_ts%draincan, its, 'avg')
         end if
 
         !> Snow variables.
@@ -2069,6 +2214,9 @@ module output_variables
         end if
         if (associated(group%fsno)) then
             call output_variables_field_update(group%fsno, group_ts%fsno, its, 'avg')
+        end if
+        if (associated(group%sublsno)) then
+            call output_variables_field_update(group%sublsno, group_ts%sublsno, its, 'avg')
         end if
         if (associated(group%sno)) then
             call output_variables_field_update(group%sno, group_ts%sno, its, 'avg')
@@ -2125,6 +2273,9 @@ module output_variables
         end if
         if (associated(group%et)) then
             call output_variables_field_update(group%et, group_ts%et, its, 'sum')
+        end if
+        if (associated(group%evpsurf)) then
+            call output_variables_field_update(group%evpsurf, group_ts%evpsurf, its, 'sum')
         end if
         if (associated(group%evpb)) then
             call output_variables_field_update(group%evpb, group_ts%evpb, its, 'avg')

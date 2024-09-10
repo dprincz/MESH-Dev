@@ -801,6 +801,20 @@ module sa_mesh_run_between_grid
                 vs%basin%fzwscan = huge(vs%basin%fzwscan)
             end if
         end if
+        if (allocated(vs%basin%evpcan) .and. allocated(vs%grid%evpcan)) then
+            if (all(vs%grid%evpcan /= huge(vs%grid%evpcan))) then
+                vs%basin%evpcan = vs%grid%evpcan*shd%FRAC
+            else
+                vs%basin%evpcan = huge(vs%basin%evpcan)
+            end if
+        end if
+        if (allocated(vs%basin%sublcan) .and. allocated(vs%grid%sublcan)) then
+            if (all(vs%grid%sublcan /= huge(vs%grid%sublcan))) then
+                vs%basin%sublcan = vs%grid%sublcan*shd%FRAC
+            else
+                vs%basin%sublcan = huge(vs%basin%sublcan)
+            end if
+        end if
         if (allocated(vs%basin%cmas) .and. allocated(vs%grid%cmas)) then
             if (all(vs%grid%cmas /= huge(vs%grid%cmas))) then
                 vs%basin%cmas = vs%grid%cmas*shd%FRAC
@@ -834,11 +848,25 @@ module sa_mesh_run_between_grid
                 vs%basin%tcan = huge(vs%basin%tcan)
             end if
         end if
+        if (allocated(vs%basin%trroot) .and. allocated(vs%grid%trroot)) then
+            if (all(vs%grid%trroot /= huge(vs%grid%trroot))) then
+                vs%basin%trroot = vs%grid%trroot*shd%FRAC
+            else
+                vs%basin%trroot = huge(vs%basin%trroot)
+            end if
+        end if
         if (allocated(vs%basin%gro) .and. allocated(vs%grid%gro)) then
             if (all(vs%grid%gro /= huge(vs%grid%gro))) then
                 vs%basin%gro = vs%grid%gro*shd%FRAC
             else
                 vs%basin%gro = huge(vs%basin%gro)
+            end if
+        end if
+        if (allocated(vs%basin%draincan) .and. allocated(vs%grid%draincan)) then
+            if (all(vs%grid%draincan /= huge(vs%grid%draincan))) then
+                vs%basin%draincan = vs%grid%draincan*shd%FRAC
+            else
+                vs%basin%draincan = huge(vs%basin%draincan)
             end if
         end if
 
@@ -848,6 +876,13 @@ module sa_mesh_run_between_grid
                 vs%basin%fsno = vs%grid%fsno*shd%FRAC
             else
                 vs%basin%fsno = huge(vs%basin%fsno)
+            end if
+        end if
+        if (allocated(vs%basin%sublsno) .and. allocated(vs%grid%sublsno)) then
+            if (all(vs%grid%sublsno /= huge(vs%grid%sublsno))) then
+                vs%basin%sublsno = vs%grid%sublsno*shd%FRAC
+            else
+                vs%basin%sublsno = huge(vs%basin%sublsno)
             end if
         end if
         if (allocated(vs%basin%sno) .and. allocated(vs%grid%sno)) then
@@ -984,6 +1019,13 @@ module sa_mesh_run_between_grid
                 vs%basin%et = vs%grid%et*shd%FRAC
             else
                 vs%basin%et = huge(vs%basin%et)
+            end if
+        end if
+        if (allocated(vs%basin%evpsurf) .and. allocated(vs%grid%evpsurf)) then
+            if (all(vs%grid%evpsurf /= huge(vs%grid%evpsurf))) then
+                vs%basin%evpsurf = vs%grid%evpsurf*shd%FRAC
+            else
+                vs%basin%evpsurf = huge(vs%basin%evpsurf)
             end if
         end if
 !-        if (allocated(vs%basin%evpb) .and. allocated(vs%grid%evpb)) then
@@ -1341,6 +1383,16 @@ module sa_mesh_run_between_grid
                         vs%basin%fzwscan(ii) = vs%basin%fzwscan(ii) + vs%basin%fzwscan(i)
                     end if
                 end if
+                if (allocated(vs%basin%evpcan)) then
+                    if (vs%basin%evpcan(i) /= huge(vs%basin%evpcan)) then
+                        vs%basin%evpcan(ii) = vs%basin%evpcan(ii) + vs%basin%evpcan(i)
+                    end if
+                end if
+                if (allocated(vs%basin%sublcan)) then
+                    if (vs%basin%sublcan(i) /= huge(vs%basin%sublcan)) then
+                        vs%basin%sublcan(ii) = vs%basin%sublcan(ii) + vs%basin%sublcan(i)
+                    end if
+                end if
                 if (allocated(vs%basin%cmas)) then
                     if (vs%basin%cmas(i) /= huge(vs%basin%cmas)) vs%basin%cmas(ii) = vs%basin%cmas(ii) + vs%basin%cmas(i)
                 end if
@@ -1358,13 +1410,26 @@ module sa_mesh_run_between_grid
                         end if
                     end if
                 end if
+                if (allocated(vs%basin%trroot)) then
+                    if (vs%basin%trroot(i) /= huge(vs%basin%trroot)) vs%basin%trroot(ii) = vs%basin%trroot(ii) + vs%basin%trroot(i)
+                end if
                 if (allocated(vs%basin%gro)) then
                     if (vs%basin%gro(i) /= huge(vs%basin%gro)) vs%basin%gro(ii) = vs%basin%gro(ii) + vs%basin%gro(i)
+                end if
+                if (allocated(vs%basin%draincan)) then
+                    if (vs%basin%draincan(i) /= huge(vs%basin%draincan)) then
+                        vs%basin%draincan(ii) = vs%basin%draincan(ii) + vs%basin%draincan(i)
+                    end if
                 end if
 
                 !> Snow variables.
                 if (allocated(vs%basin%fsno)) then
                     if (vs%basin%fsno(i) /= huge(vs%basin%fsno)) vs%basin%fsno(ii) = vs%basin%fsno(ii) + vs%basin%fsno(i)
+                end if
+                if (allocated(vs%basin%sublsno)) then
+                    if (vs%basin%sublsno(i) /= huge(vs%basin%sublsno)) then
+                        vs%basin%sublsno(ii) = vs%basin%sublsno(ii) + vs%basin%sublsno(i)
+                    end if
                 end if
                 if (allocated(vs%basin%sno)) then
                     if (vs%basin%sno(i) /= huge(vs%basin%sno)) vs%basin%sno(ii) = vs%basin%sno(ii) + vs%basin%sno(i)
@@ -1439,6 +1504,11 @@ module sa_mesh_run_between_grid
                 end if
                 if (allocated(vs%basin%et)) then
                     if (vs%basin%et(i) /= huge(vs%basin%et)) vs%basin%et(ii) = vs%basin%et(ii) + vs%basin%et(i)
+                end if
+                if (allocated(vs%basin%evpsurf)) then
+                    if (vs%basin%evpsurf(i) /= huge(vs%basin%evpsurf)) then
+                        vs%basin%evpsurf(ii) = vs%basin%evpsurf(ii) + vs%basin%evpsurf(i)
+                    end if
                 end if
 !-                if (allocated(vs%basin%evpb)) then
 !-                    if (vs%basin%evpb(i) /= huge(vs%basin%evpb)) vs%basin%evpb(ii) = vs%basin%evpb(ii) + vs%basin%evpb(i)
@@ -1657,6 +1727,12 @@ module sa_mesh_run_between_grid
         if (allocated(vs%basin%fzwscan)) then
             if (all(vs%basin%fzwscan /= huge(vs%basin%fzwscan))) vs%basin%fzwscan = vs%basin%fzwscan/frac
         end if
+        if (allocated(vs%basin%evpcan)) then
+            if (all(vs%basin%evpcan /= huge(vs%basin%evpcan))) vs%basin%evpcan = vs%basin%evpcan/frac
+        end if
+        if (allocated(vs%basin%sublcan)) then
+            if (all(vs%basin%sublcan /= huge(vs%basin%sublcan))) vs%basin%sublcan = vs%basin%sublcan/frac
+        end if
         if (allocated(vs%basin%cmas)) then
             if (all(vs%basin%cmas /= huge(vs%basin%cmas))) where (tcanfrac > 0.0) vs%basin%cmas = vs%basin%cmas/tcanfrac
         end if
@@ -1669,13 +1745,24 @@ module sa_mesh_run_between_grid
         if (allocated(vs%basin%tcan)) then
             if (all(vs%basin%tcan /= huge(vs%basin%tcan))) where (tcanfrac > 0.0) vs%basin%tcan = vs%basin%tcan/tcanfrac
         end if
+        if (allocated(vs%basin%trroot)) then
+            if (all(vs%basin%trroot /= huge(vs%basin%trroot))) where (tcanfrac > 0.0) vs%basin%trroot = vs%basin%trroot/tcanfrac
+        end if
         if (allocated(vs%basin%gro)) then
             if (all(vs%basin%gro /= huge(vs%basin%gro))) where (tcanfrac > 0.0) vs%basin%gro = vs%basin%gro/tcanfrac
+        end if
+        if (allocated(vs%basin%draincan)) then
+            if (all(vs%basin%draincan /= huge(vs%basin%draincan))) then
+                where (tcanfrac > 0.0) vs%basin%draincan = vs%basin%draincan/tcanfrac
+            end if
         end if
 
         !> Snow variables.
         if (allocated(vs%basin%fsno)) then
             if (all(vs%basin%fsno /= huge(vs%basin%fsno))) vs%basin%fsno = vs%basin%fsno/frac
+        end if
+        if (allocated(vs%basin%sublsno)) then
+            if (all(vs%basin%sublsno /= huge(vs%basin%sublsno))) vs%basin%sublsno = vs%basin%sublsno/frac
         end if
         if (allocated(vs%basin%sno)) then
             if (all(vs%basin%sno /= huge(vs%basin%sno))) vs%basin%sno = vs%basin%sno/frac
@@ -1729,6 +1816,9 @@ module sa_mesh_run_between_grid
         end if
         if (allocated(vs%basin%et)) then
             if (all(vs%basin%et /= huge(vs%basin%et))) vs%basin%et = vs%basin%et/frac
+        end if
+        if (allocated(vs%basin%evpsurf)) then
+            if (all(vs%basin%evpsurf /= huge(vs%basin%evpsurf))) vs%basin%evpsurf = vs%basin%evpsurf/frac
         end if
 !-        if (allocated(vs%basin%evpb)) then
 !-            if (all(vs%basin%evpb /= huge(vs%basin%evpb))) vs%basin%evpb = vs%basin%evpb/frac

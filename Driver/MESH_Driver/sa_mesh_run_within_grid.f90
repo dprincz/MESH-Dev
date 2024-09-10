@@ -303,14 +303,19 @@ module sa_mesh_run_within_grid
         !> Canopy variables.
         if (allocated(vs%grid%lqwscan)) vs%grid%lqwscan(i1:i2) = 0.0
         if (allocated(vs%grid%fzwscan)) vs%grid%fzwscan(i1:i2) = 0.0
+        if (allocated(vs%grid%evpcan)) vs%grid%evpcan(i1:i2) = 0.0
+        if (allocated(vs%grid%sublcan)) vs%grid%sublcan(i1:i2) = 0.0
         if (allocated(vs%grid%cmas)) vs%grid%cmas(i1:i2) = 0.0
         if (allocated(vs%grid%tacan)) vs%grid%tacan(i1:i2) = 0.0
         if (allocated(vs%grid%qacan)) vs%grid%qacan(i1:i2) = 0.0
         if (allocated(vs%grid%tcan)) vs%grid%tcan(i1:i2) = 0.0
+        if (allocated(vs%grid%trroot)) vs%grid%trroot(i1:i2) = 0.0
         if (allocated(vs%grid%gro)) vs%grid%gro(i1:i2) = 0.0
+        if (allocated(vs%grid%draincan)) vs%grid%draincan(i1:i2) = 0.0
 
         !> Snow variables.
         if (allocated(vs%grid%fsno)) vs%grid%fsno(i1:i2) = 0.0
+        if (allocated(vs%grid%sublsno)) vs%grid%sublsno(i1:i2) = 0.0
         if (allocated(vs%grid%sno)) vs%grid%sno(i1:i2) = 0.0
         if (allocated(vs%grid%rhosno)) vs%grid%rhosno(i1:i2) = 0.0
 !-        if (allocated(vs%grid%zsno)) vs%grid%zsno(i1:i2) = 0.0
@@ -330,6 +335,7 @@ module sa_mesh_run_within_grid
         if (allocated(vs%grid%pndcaf)) vs%grid%pndcaf(i1:i2) = 0.0
         if (allocated(vs%grid%potevp)) vs%grid%potevp(i1:i2) = 0.0
         if (allocated(vs%grid%et)) vs%grid%et(i1:i2) = 0.0
+        if (allocated(vs%grid%evpsurf)) vs%grid%evpsurf(i1:i2) = 0.0
 !-        if (allocated(vs%grid%evpb)) vs%grid%evpb(i1:i2) = 0.0
 !-        if (allocated(vs%grid%arrd)) vs%grid%arrd(i1:i2) = 0.0
         if (allocated(vs%grid%ovrflw)) vs%grid%ovrflw(i1:i2) = 0.0
@@ -477,6 +483,16 @@ module sa_mesh_run_within_grid
                     vs%grid%fzwscan(ki) = vs%grid%fzwscan(ki) + vs%tile%fzwscan(k)*frac
                 end if
             end if
+            if (allocated(vs%grid%evpcan) .and. allocated(vs%tile%evpcan)) then
+                if (vs%tile%evpcan(k) /= huge(vs%tile%evpcan)) then
+                    vs%grid%evpcan(ki) = vs%grid%evpcan(ki) + vs%tile%evpcan(k)*frac
+                end if
+            end if
+            if (allocated(vs%grid%sublcan) .and. allocated(vs%tile%sublcan)) then
+                if (vs%tile%sublcan(k) /= huge(vs%tile%sublcan)) then
+                    vs%grid%sublcan(ki) = vs%grid%sublcan(ki) + vs%tile%sublcan(k)*frac
+                end if
+            end if
             if (allocated(vs%grid%cmas) .and. allocated(vs%tile%cmas)) then
                 if (vs%tile%cmas(k) /= huge(vs%tile%cmas)) vs%grid%cmas(ki) = vs%grid%cmas(ki) + vs%tile%cmas(k)*frac
             end if
@@ -494,13 +510,24 @@ module sa_mesh_run_within_grid
                     tcanfrac(ki) = tcanfrac(ki) + frac
                 end if
             end if
+            if (allocated(vs%grid%trroot) .and. allocated(vs%tile%trroot)) then
+                if (vs%tile%trroot(k) /= huge(vs%tile%trroot)) vs%grid%trroot(ki) = vs%grid%trroot(ki) + vs%tile%trroot(k)*frac
+            end if
             if (allocated(vs%grid%gro) .and. allocated(vs%tile%gro)) then
                 if (vs%tile%gro(k) /= huge(vs%tile%gro)) vs%grid%gro(ki) = vs%grid%gro(ki) + vs%tile%gro(k)*frac
+            end if
+            if (allocated(vs%grid%draincan) .and. allocated(vs%tile%draincan)) then
+                if (vs%tile%draincan(k) /= huge(vs%tile%draincan)) then
+                    vs%grid%draincan(ki) = vs%grid%draincan(ki) + vs%tile%draincan(k)*frac
+                end if
             end if
 
             !> Snow variables.
             if (allocated(vs%grid%fsno) .and. allocated(vs%tile%fsno)) then
                 if (vs%tile%fsno(k) /= huge(vs%tile%fsno)) vs%grid%fsno(ki) = vs%grid%fsno(ki) + vs%tile%fsno(k)*frac
+            end if
+            if (allocated(vs%grid%sublsno) .and. allocated(vs%tile%sublsno)) then
+                if (vs%tile%sublsno(k) /= huge(vs%tile%sublsno)) vs%grid%sublsno(ki) = vs%grid%sublsno(ki) + vs%tile%sublsno(k)*frac
             end if
             if (allocated(vs%grid%sno) .and. allocated(vs%tile%sno)) then
                 if (vs%tile%sno(k) /= huge(vs%tile%sno)) vs%grid%sno(ki) = vs%grid%sno(ki) + vs%tile%sno(k)*frac
@@ -568,6 +595,9 @@ module sa_mesh_run_within_grid
             end if
             if (allocated(vs%grid%et) .and. allocated(vs%tile%et)) then
                 if (vs%tile%et(k) /= huge(vs%tile%et)) vs%grid%et(ki) = vs%grid%et(ki) + vs%tile%et(k)*frac
+            end if
+            if (allocated(vs%grid%evpsurf) .and. allocated(vs%tile%evpsurf)) then
+                if (vs%tile%evpsurf(k) /= huge(vs%tile%evpsurf)) vs%grid%evpsurf(ki) = vs%grid%evpsurf(ki) + vs%tile%evpsurf(k)*frac
             end if
 !-            if (allocated(vs%grid%evpb) .and. allocated(vs%tile%evpb)) then
 !-                if (vs%tile%evpb(k) /= huge(vs%tile%evpb)) vs%grid%evpb(ki) = vs%grid%evpb(ki) + vs%tile%evpb(k)*frac

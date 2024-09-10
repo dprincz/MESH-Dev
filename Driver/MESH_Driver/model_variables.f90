@@ -50,21 +50,30 @@ module model_variables
         !> Canopy variables.
         !* lqwscan: Liquid water interception in the canopy. [kg m**-2].
         !* fzwscan: Frozen water interception in the canopy. [kg m**-2].
+        !* evpcan: Liquid water on the canopy removed by evaporation (rate). [kg m**-2 s**-1].
+        !* sublcan: Frozen water on the canopy removed by sublimation (rate). [kg m**-2 s**-1].
         !* cmas: Organic mass of the canopy. [kg m**-2].
         !* tacan: Air temperature in the canopy. [K].
         !* qacan: Specific humidity of air in the canopy. [kg kg**-1].
         !* tcan: Vegetation canopy temperature. [K].
+        !* trroot: Transpiration from the soil (rate). [kg m**-2 s**-1].
         !* gro: Vegetation growth index. [--].
+        !* draincan: Liquid/frozen water runoff from vegetation (rate). [kg m**-2 s**-1].
         real, dimension(:), allocatable :: lqwscan
         real, dimension(:), allocatable :: fzwscan
+        real, dimension(:), allocatable :: evpcan
+        real, dimension(:), allocatable :: sublcan
         real, dimension(:), allocatable :: cmas
         real, dimension(:), allocatable :: tacan
         real, dimension(:), allocatable :: qacan
         real, dimension(:), allocatable :: tcan
+        real, dimension(:), allocatable :: trroot
         real, dimension(:), allocatable :: gro
+        real, dimension(:), allocatable :: draincan
 
         !> Snow variables.
         !* fsno: Fraction of fully snow covered area. [fraction].
+        !* sublsno: Sublimation from snow on the ground (rate). [kg m**-2 s**-1].
         !* sno: Snow mass. [kg m**-2].
         !* rhosno: Snow density. [kg m**-3].
         !* zsno: Snow depth. [m].
@@ -73,6 +82,7 @@ module model_variables
         !* albsno: Snow albedo. [fraction].
         !* drainsno: Drainage from the bottom of the snowpack (runoff rate). [kg m**-2 s**-1].
         real, dimension(:), allocatable :: fsno
+        real, dimension(:), allocatable :: sublsno
         real, dimension(:), allocatable :: sno
         real, dimension(:), allocatable :: rhosno
 !-        real, dimension(:), allocatable :: zsno
@@ -92,6 +102,7 @@ module model_variables
         !* pndcaf: Contributing fraction of ponded water (PDMROF). [fraction].
         !* potevp: Potential evaporation rate. [kg m**-2 s**-1].
         !* et: Evapotranspiration rate. [kg m**-2 s**-1].
+        !* evpsurf: Liquid water evaporated from the ground (rate). [kg m**-2 s**-1].
         !* evpb: Evaporation efficiency (ET to POTEVP) of the canopy. [--].
         !* arrd: Arridity index (PRE to POTEVP). [--].
         !* ovrflw: Overland runoff rate. [kg m**-2 s**-1].
@@ -110,6 +121,7 @@ module model_variables
         real, dimension(:), allocatable :: pndcaf
         real, dimension(:), allocatable :: potevp
         real, dimension(:), allocatable :: et
+        real, dimension(:), allocatable :: evpsurf
 !-        real, dimension(:), allocatable :: evpb
 !-        real, dimension(:), allocatable :: arrd
         real, dimension(:), allocatable :: ovrflw
@@ -291,14 +303,19 @@ module model_variables
         !> Canopy variables.
         if (allocated(group%lqwscan)) group%lqwscan = 0.0
         if (allocated(group%fzwscan)) group%fzwscan = 0.0
+        if (allocated(group%evpcan)) group%evpcan = 0.0
+        if (allocated(group%sublcan)) group%sublcan = 0.0
         if (allocated(group%cmas)) group%cmas = 0.0
         if (allocated(group%tacan)) group%tacan = 0.0
         if (allocated(group%qacan)) group%qacan = 0.0
         if (allocated(group%tcan)) group%tcan = 0.0
+        if (allocated(group%trroot)) group%trroot = 0.0
         if (allocated(group%gro)) group%gro = 0.0
+        if (allocated(group%draincan)) group%draincan = 0.0
 
         !> Snow variables.
         if (allocated(group%fsno)) group%fsno = 0.0
+        if (allocated(group%sublsno)) group%sublsno = 0.0
         if (allocated(group%sno)) group%sno = 0.0
         if (allocated(group%rhosno)) group%rhosno = 0.0
 !-        if (allocated(group%zsno)) group%zsno = 0.0
@@ -318,6 +335,7 @@ module model_variables
         if (allocated(group%pndcaf)) group%pndcaf = 0.0
         if (allocated(group%potevp)) group%potevp = 0.0
         if (allocated(group%et)) group%et = 0.0
+        if (allocated(group%evpsurf)) group%evpsurf = 0.0
 !-        if (allocated(group%evpb)) group%evpb = 0.0
 !-        if (allocated(group%arrd)) group%arrd = 0.0
         if (allocated(group%ovrflw)) group%ovrflw = 0.0
@@ -457,14 +475,19 @@ module model_variables
         !> Canopy variables.
         allocate(group%lqwscan(n), stat = z); if (z /= 0) ierr = z
         allocate(group%fzwscan(n), stat = z); if (z /= 0) ierr = z
+        allocate(group%evpcan(n), stat = z); if (z /= 0) ierr = z
+        allocate(group%sublcan(n), stat = z); if (z /= 0) ierr = z
         allocate(group%cmas(n), stat = z); if (z /= 0) ierr = z
         allocate(group%tacan(n), stat = z); if (z /= 0) ierr = z
         allocate(group%qacan(n), stat = z); if (z /= 0) ierr = z
         allocate(group%tcan(n), stat = z); if (z /= 0) ierr = z
+        allocate(group%trroot(n), stat = z); if (z /= 0) ierr = z
         allocate(group%gro(n), stat = z); if (z /= 0) ierr = z
+        allocate(group%draincan(n), stat = z); if (z /= 0) ierr = z
 
         !> Snow variables.
         allocate(group%fsno(n), stat = z); if (z /= 0) ierr = z
+        allocate(group%sublsno(n), stat = z); if (z /= 0) ierr = z
         allocate(group%sno(n), stat = z); if (z /= 0) ierr = z
         allocate(group%rhosno(n), stat = z); if (z /= 0) ierr = z
 !-        allocate(group%zsno(n), stat = z); if (z /= 0) ierr = z
@@ -484,6 +507,7 @@ module model_variables
         allocate(group%pndcaf(n), stat = z); if (z /= 0) ierr = z
         allocate(group%potevp(n), stat = z); if (z /= 0) ierr = z
         allocate(group%et(n), stat = z); if (z /= 0) ierr = z
+        allocate(group%evpsurf(n), stat = z); if (z /= 0) ierr = z
 !-        allocate(group%evpb(n), stat = z); if (z /= 0) ierr = z
 !-        allocate(group%arrd(n), stat = z); if (z /= 0) ierr = z
         allocate(group%ovrflw(n), stat = z); if (z /= 0) ierr = z
