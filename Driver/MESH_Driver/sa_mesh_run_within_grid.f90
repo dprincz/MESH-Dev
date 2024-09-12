@@ -310,7 +310,6 @@ module sa_mesh_run_within_grid
         if (allocated(vs%grid%qacan)) vs%grid%qacan(i1:i2) = 0.0
         if (allocated(vs%grid%uvcan)) vs%grid%uvcan(i1:i2) = 0.0
         if (allocated(vs%grid%tcan)) vs%grid%tcan(i1:i2) = 0.0
-        if (allocated(vs%grid%trroot)) vs%grid%trroot(i1:i2) = 0.0
         if (allocated(vs%grid%gro)) vs%grid%gro(i1:i2) = 0.0
         if (allocated(vs%grid%draincan)) vs%grid%draincan(i1:i2) = 0.0
 
@@ -358,6 +357,7 @@ module sa_mesh_run_within_grid
         if (allocated(vs%grid%lqwssol)) vs%grid%lqwssol(i1:i2, :) = 0.0
         if (allocated(vs%grid%fzwssol)) vs%grid%fzwssol(i1:i2, :) = 0.0
         if (allocated(vs%grid%tsol)) vs%grid%tsol(i1:i2, :) = 0.0
+        if (allocated(vs%grid%trroot)) vs%grid%trroot(i1:i2, :) = 0.0
         if (allocated(vs%grid%gflx)) vs%grid%gflx(i1:i2, :) = 0.0
         if (allocated(vs%grid%hcps)) vs%grid%hcps(i1:i2, :) = 0.0
         if (allocated(vs%grid%hcpc)) vs%grid%hcpc(i1:i2, :) = 0.0
@@ -521,9 +521,6 @@ module sa_mesh_run_within_grid
                     tcanfrac(ki) = tcanfrac(ki) + frac
                 end if
             end if
-            if (allocated(vs%grid%trroot) .and. allocated(vs%tile%trroot)) then
-                if (vs%tile%trroot(k) /= huge(vs%tile%trroot)) vs%grid%trroot(ki) = vs%grid%trroot(ki) + vs%tile%trroot(k)*frac
-            end if
             if (allocated(vs%grid%gro) .and. allocated(vs%tile%gro)) then
                 if (vs%tile%gro(k) /= huge(vs%tile%gro)) vs%grid%gro(ki) = vs%grid%gro(ki) + vs%tile%gro(k)*frac
             end if
@@ -684,6 +681,11 @@ module sa_mesh_run_within_grid
             if (allocated(vs%grid%tsol) .and. allocated(vs%tile%tsol)) then
                 if (all(vs%tile%tsol(k, :) /= huge(vs%tile%tsol))) then
                     vs%grid%tsol(ki, :) = vs%grid%tsol(ki, :) + vs%tile%tsol(k, :)*frac
+                end if
+            end if
+            if (allocated(vs%grid%trroot) .and. allocated(vs%tile%trroot)) then
+                if (all(vs%tile%trroot(k, :) /= huge(vs%tile%trroot))) then
+                    vs%grid%trroot(ki, :) = vs%grid%trroot(ki, :) + vs%tile%trroot(k, :)*frac
                 end if
             end if
             if (allocated(vs%grid%gflx) .and. allocated(vs%tile%gflx)) then

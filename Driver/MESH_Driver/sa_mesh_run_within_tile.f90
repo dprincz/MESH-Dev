@@ -69,7 +69,6 @@ module sa_mesh_run_within_tile
             if (allocated(vs%tile%qacan)) n = n + 1
             if (allocated(vs%tile%uvcan)) n = n + 1
             if (allocated(vs%tile%tcan)) n = n + 1
-            if (allocated(vs%tile%trroot)) n = n + 1
             if (allocated(vs%tile%gro)) n = n + 1
             if (allocated(vs%tile%draincan)) n = n + 1
             if (allocated(vs%tile%sno)) n = n + 1
@@ -105,6 +104,7 @@ module sa_mesh_run_within_tile
             if (allocated(vs%tile%thlqsol)) n = n + size(vs%tile%thlqsol, 2)
             if (allocated(vs%tile%thicsol)) n = n + size(vs%tile%thicsol, 2)
             if (allocated(vs%tile%tsol)) n = n + size(vs%tile%tsol, 2)
+            if (allocated(vs%tile%trroot)) n = n + size(vs%tile%trroot, 2)
             if (allocated(vs%tile%gflx)) n = n + size(vs%tile%gflx, 2)
             if (allocated(vs%tile%hcps)) n = n + size(vs%tile%hcps, 2)
             if (allocated(vs%tile%hcpc)) n = n + size(vs%tile%hcpc, 2)
@@ -167,10 +167,6 @@ module sa_mesh_run_within_tile
                 end if
                 if (allocated(vs%tile%tcan)) then
                     allocate(model_variables_to_head(n)%field, source = model_variable_pointer_1d(dat = vs%tile%tcan))
-                    n = n + 1
-                end if
-                if (allocated(vs%tile%trroot)) then
-                    allocate(model_variables_to_head(n)%field, source = model_variable_pointer_1d(dat = vs%tile%trroot))
                     n = n + 1
                 end if
                 if (allocated(vs%tile%gro)) then
@@ -318,6 +314,12 @@ module sa_mesh_run_within_tile
                 if (allocated(vs%tile%tsol)) then
                     do j = 1, size(vs%tile%tsol, 2)
                         allocate(model_variables_to_head(n)%field, source = model_variable_pointer_1d(dat = vs%tile%tsol(:, j)))
+                        n = n + 1
+                    end do
+                end if
+                if (allocated(vs%tile%trroot)) then
+                    do j = 1, size(vs%tile%trroot, 2)
+                        allocate(model_variables_to_head(n)%field, source = model_variable_pointer_1d(dat = vs%tile%trroot(:, j)))
                         n = n + 1
                     end do
                 end if
@@ -919,7 +921,6 @@ module sa_mesh_run_within_tile
 !        if (allocated(vs%tile%qacan)) vs%tile%qacan(il1:il2) = 0.0
 !        if (allocated(vs%tile%uvcan)) vs%tile%uvcan(il1:il2) = 0.0
 !        if (allocated(vs%tile%tcan)) vs%tile%tcan(il1:il2) = 0.0
-        if (allocated(vs%tile%trroot)) vs%tile%trroot(il1:il2) = 0.0
 !        if (allocated(vs%tile%gro)) vs%tile%gro(il1:il2) = 0.0
         if (allocated(vs%tile%draincan)) vs%tile%draincan(il1:il2) = 0.0
 
@@ -967,10 +968,11 @@ module sa_mesh_run_within_tile
 !        if (allocated(vs%tile%lqwssol)) vs%tile%lqwssol(il1:il2, :) = 0.0
 !        if (allocated(vs%tile%fzwssol)) vs%tile%fzwssol(il1:il2, :) = 0.0
 !        if (allocated(vs%tile%tsol)) vs%tile%tsol(il1:il2, :) = 0.0
+        if (allocated(vs%tile%trroot)) vs%tile%trroot(il1:il2, :) = 0.0
         if (allocated(vs%tile%gflx)) vs%tile%gflx(il1:il2, :) = 0.0
         if (allocated(vs%tile%hcps)) vs%tile%hcps(il1:il2, :) = 0.0
         if (allocated(vs%tile%hcpc)) vs%tile%hcpc(il1:il2, :) = 0.0
-        if (allocated(vs%tile%hcpg)) vs%tile%hcpg(il1:il2, :) = 0.0		
+        if (allocated(vs%tile%hcpg)) vs%tile%hcpg(il1:il2, :) = 0.0
         if (allocated(vs%tile%tctopc)) vs%tile%tctopc(il1:il2, :) = 0.0
         if (allocated(vs%tile%tctopg)) vs%tile%tctopg(il1:il2, :) = 0.0
         if (allocated(vs%tile%tcbotc)) vs%tile%tcbotc(il1:il2, :) = 0.0
