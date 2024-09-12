@@ -73,7 +73,6 @@ module variable_names
     character(len = *), parameter :: VN_TACAN = 'TACAN'
     character(len = *), parameter :: VN_QACAN = 'QACAN'
     character(len = *), parameter :: VN_UVCAN = 'UVCAN'
-    character(len = *), parameter :: VN_TRROOT = 'TRROOT'
     character(len = *), parameter :: VN_GRO = 'GRO'
     character(len = *), parameter :: VN_DRAINCAN = 'DRAINCAN'
 
@@ -119,6 +118,7 @@ module variable_names
     character(len = *), parameter :: VN_FZWSSOL = 'FZWSSOL'
     character(len = *), parameter :: VN_ALWSSOL = 'ALWSSOL'
     character(len = *), parameter :: VN_TSOL = 'TSOL'
+    character(len = *), parameter :: VN_TRROOT = 'TRROOT'
     character(len = *), parameter :: VN_GFLX = 'GFLX'
     character(len = *), parameter :: VN_HCPS = 'HCPS'
     character(len = *), parameter :: VN_HCPC = 'HCPC'
