@@ -41,7 +41,6 @@ module output_variables
         real, dimension(:), pointer :: sublcan => null()
         real, dimension(:), pointer :: cmas => null()
         real, dimension(:), pointer :: tcan => null()
-        real, dimension(:), pointer :: trroot => null()
         real, dimension(:), pointer :: gro => null()
         real, dimension(:), pointer :: draincan => null()
 
@@ -90,6 +89,7 @@ module output_variables
         real, dimension(:, :), pointer :: fzwssol => null()
         real, dimension(:, :), pointer :: alwssol => null()
         real, dimension(:, :), pointer :: tsol => null()
+        real, dimension(:, :), pointer :: trroot => null()
         real, dimension(:, :), pointer :: gflx => null()
         real, dimension(:, :), pointer :: latflw => null()
         real, dimension(:), pointer :: zsolsat => null()
@@ -405,7 +405,7 @@ module output_variables
                     fields%vs%evpcan = huge(fields%vs%evpcan)
                 end if
                 call output_variables_allocate(fields%evpcan, n1, pntr)
-                if (associated(fields%ts)) call output_variables_allocate(fields%ts%lqwscan, n1)
+                if (associated(fields%ts)) call output_variables_allocate(fields%ts%evpcan, n1)
             case (VN_SUBLCAN)
                 call output_variables_activate_pntr(fields, VN_TCAN)
                 if (.not. allocated(fields%vs%sublcan)) then
@@ -413,7 +413,7 @@ module output_variables
                     fields%vs%sublcan = huge(fields%vs%sublcan)
                 end if
                 call output_variables_allocate(fields%sublcan, n1, pntr)
-                if (associated(fields%ts)) call output_variables_allocate(fields%ts%fzwscan, n1)
+                if (associated(fields%ts)) call output_variables_allocate(fields%ts%sublcan, n1)
             case (VN_CMAS)
                 call output_variables_activate_pntr(fields, VN_TCAN)
                 if (.not. allocated(fields%vs%cmas)) then
@@ -431,14 +431,6 @@ module output_variables
                 if (associated(fields%ts)) call output_variables_allocate(fields%ts%tcan, n1)
                 call output_variables_allocate(fields%ican, n1)
                 if (associated(fields%ts)) call output_variables_allocate(fields%ts%ican, n1)
-            case (VN_TRROOT)
-                call output_variables_activate_pntr(fields, VN_TCAN)
-                if (.not. allocated(fields%vs%trroot)) then
-                    allocate(fields%vs%trroot(fields%vs%dim_length))
-                    fields%vs%trroot = huge(fields%vs%trroot)
-                end if
-                call output_variables_allocate(fields%trroot, n1, pntr)
-                if (associated(fields%ts)) call output_variables_allocate(fields%ts%trroot, n1)
             case (VN_GRO)
                 call output_variables_activate_pntr(fields, VN_TCAN)
                 if (.not. allocated(fields%vs%gro)) then
@@ -705,6 +697,13 @@ module output_variables
                 end if
                 call output_variables_allocate(fields%tsol, n1, n2, pntr, ig)
                 if (associated(fields%ts)) call output_variables_allocate(fields%ts%tsol, n1, n2)
+            case (VN_TRROOT)
+                if (.not. allocated(fields%vs%trroot)) then
+                    allocate(fields%vs%trroot(fields%vs%dim_length, size(fields%vs%dzsol, 1)))
+                    fields%vs%trroot = huge(fields%vs%trroot)
+                end if
+                call output_variables_allocate(fields%trroot, n1, n2, pntr, ig)
+                if (associated(fields%ts)) call output_variables_allocate(fields%ts%trroot, n1, n2)
             case (VN_GFLX)
                 if (.not. allocated(fields%vs%gflx)) then
                     allocate(fields%vs%gflx(fields%vs%dim_length, size(fields%vs%dzsol, 1)))
@@ -947,7 +946,6 @@ module output_variables
         if (associated(group%sublcan)) group%sublcan = out%NO_DATA
         if (associated(group%cmas)) group%cmas = out%NO_DATA
         if (associated(group%tcan)) group%tcan = out%NO_DATA
-        if (associated(group%trroot)) group%trroot = out%NO_DATA
         if (associated(group%gro)) group%gro = out%NO_DATA
         if (associated(group%draincan)) group%draincan = out%NO_DATA
 
@@ -996,6 +994,7 @@ module output_variables
         if (associated(group%fzwssol)) group%fzwssol = out%NO_DATA
         if (associated(group%alwssol)) group%alwssol = out%NO_DATA
         if (associated(group%tsol)) group%tsol = out%NO_DATA
+        if (associated(group%trroot)) group%trroot = out%NO_DATA
         if (associated(group%gflx)) group%gflx = out%NO_DATA
         if (associated(group%latflw)) group%latflw = out%NO_DATA
         if (associated(group%zsolsat)) group%zsolsat = out%NO_DATA
@@ -1379,19 +1378,6 @@ module output_variables
                     end where
                 else
                     group%cmas = 0.0
-                end if
-            end if
-        end if
-        if (associated(group%trroot)) then
-            if (all(group%trroot == out%NO_DATA)) then
-                if (all(group_vs%trroot /= huge(group_vs%trroot))) then
-                    where (group%ican == 1.0)
-                        group%trroot = group_vs%trroot
-                    elsewhere
-                        group%trroot = 0.0
-                    end where
-                else
-                    group%trroot = 0.0
                 end if
             end if
         end if
@@ -1803,6 +1789,15 @@ module output_variables
                 end if
             end if
         end if
+        if (associated(group%trroot)) then
+            if (all(group%trroot == out%NO_DATA)) then
+                if (all(group_vs%trroot /= huge(group_vs%trroot))) then
+                    group%trroot = group_vs%trroot
+                else
+                    group%trroot = 0.0
+                end if
+            end if
+        end if
         if (associated(group%gflx)) then
             if (all(group%gflx == out%NO_DATA)) then
                 if (all(group_vs%gflx /= huge(group_vs%gflx))) then
@@ -2198,9 +2193,6 @@ module output_variables
         if (associated(group%tcan)) then
             call output_variables_field_icount_average(group%tcan, group_ts%tcan, group%ican, group_ts%ican)
         end if
-        if (associated(group%trroot)) then
-            call output_variables_field_update(group%trroot, group_ts%trroot, its, 'avg')
-        end if
         if (associated(group%gro)) then
             call output_variables_field_update(group%gro, group_ts%gro, its, 'avg')
         end if
@@ -2329,6 +2321,9 @@ module output_variables
             end if
             if (associated(group%tsol)) then
                 call output_variables_field_update(group%tsol(:, j), group_ts%tsol(:, j), its, 'avg')
+            end if
+            if (associated(group%trroot)) then
+                call output_variables_field_update(group%trroot(:, j), group_ts%trroot(:, j), its, 'avg')
             end if
             if (associated(group%gflx)) then
                 call output_variables_field_update(group%gflx(:, j), group_ts%gflx(:, j), its, 'avg')

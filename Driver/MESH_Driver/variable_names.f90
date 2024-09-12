@@ -70,7 +70,6 @@ module variable_names
     character(len = *), parameter :: VN_SUBLCAN = 'SUBLCAN'
     character(len = *), parameter :: VN_CMAS = 'CMAS'
     character(len = *), parameter :: VN_TCAN = 'TCAN'
-    character(len = *), parameter :: VN_TRROOT = 'TRROOT'
     character(len = *), parameter :: VN_GRO = 'GRO'
     character(len = *), parameter :: VN_DRAINCAN = 'DRAINCAN'
 
@@ -116,6 +115,7 @@ module variable_names
     character(len = *), parameter :: VN_FZWSSOL = 'FZWSSOL'
     character(len = *), parameter :: VN_ALWSSOL = 'ALWSSOL'
     character(len = *), parameter :: VN_TSOL = 'TSOL'
+    character(len = *), parameter :: VN_TRROOT = 'TRROOT'
     character(len = *), parameter :: VN_GFLX = 'GFLX'
     character(len = *), parameter :: VN_LATFLW = 'LATFLW'
     character(len = *), parameter :: VN_ZSOLSAT = 'ZSOLSAT'

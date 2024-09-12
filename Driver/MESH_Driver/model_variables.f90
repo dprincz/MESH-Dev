@@ -56,7 +56,6 @@ module model_variables
         !* tacan: Air temperature in the canopy. [K].
         !* qacan: Specific humidity of air in the canopy. [kg kg**-1].
         !* tcan: Vegetation canopy temperature. [K].
-        !* trroot: Transpiration from the soil (rate). [kg m**-2 s**-1].
         !* gro: Vegetation growth index. [--].
         !* draincan: Liquid/frozen water runoff from vegetation (rate). [kg m**-2 s**-1].
         real, dimension(:), allocatable :: lqwscan
@@ -67,7 +66,6 @@ module model_variables
         real, dimension(:), allocatable :: tacan
         real, dimension(:), allocatable :: qacan
         real, dimension(:), allocatable :: tcan
-        real, dimension(:), allocatable :: trroot
         real, dimension(:), allocatable :: gro
         real, dimension(:), allocatable :: draincan
 
@@ -145,6 +143,7 @@ module model_variables
         !* lqwssol: Liquid water storage in the soil. [kg m**-2].
         !* fzwssol: Frozen water storage in the soil. [kg m**-2].
         !* tsol: Temperature of the soil. [K].
+        !* trroot: Transpiration from the soil (rate). [kg m**-2 s**-1].
         !* gflx: Heat conduction between soil layers. [W m**-2].
         !* latflw: Interflow runoff rate. [kg m**-2 s**-1].
         !* zsol: Depth to the bottom of the soil column. [m].
@@ -160,6 +159,7 @@ module model_variables
         real, dimension(:, :), allocatable :: lqwssol
         real, dimension(:, :), allocatable :: fzwssol
         real, dimension(:, :), allocatable :: tsol
+        real, dimension(:, :), allocatable :: trroot
         real, dimension(:, :), allocatable :: gflx
         real, dimension(:, :), allocatable :: latflw
         real, dimension(:), allocatable :: zsol
@@ -309,7 +309,6 @@ module model_variables
         if (allocated(group%tacan)) group%tacan = 0.0
         if (allocated(group%qacan)) group%qacan = 0.0
         if (allocated(group%tcan)) group%tcan = 0.0
-        if (allocated(group%trroot)) group%trroot = 0.0
         if (allocated(group%gro)) group%gro = 0.0
         if (allocated(group%draincan)) group%draincan = 0.0
 
@@ -357,6 +356,7 @@ module model_variables
         if (allocated(group%lqwssol)) group%lqwssol = 0.0
         if (allocated(group%fzwssol)) group%fzwssol = 0.0
         if (allocated(group%tsol)) group%tsol = 0.0
+        if (allocated(group%trroot)) group%trroot = 0.0
         if (allocated(group%gflx)) group%gflx = 0.0
         if (allocated(group%latflw)) group%latflw = 0.0
         if (allocated(group%zsol)) group%zsol = 0.0
@@ -481,7 +481,6 @@ module model_variables
         allocate(group%tacan(n), stat = z); if (z /= 0) ierr = z
         allocate(group%qacan(n), stat = z); if (z /= 0) ierr = z
         allocate(group%tcan(n), stat = z); if (z /= 0) ierr = z
-        allocate(group%trroot(n), stat = z); if (z /= 0) ierr = z
         allocate(group%gro(n), stat = z); if (z /= 0) ierr = z
         allocate(group%draincan(n), stat = z); if (z /= 0) ierr = z
 
@@ -529,6 +528,7 @@ module model_variables
         allocate(group%lqwssol(n, nsl), stat = z); if (z /= 0) ierr = z
         allocate(group%fzwssol(n, nsl), stat = z); if (z /= 0) ierr = z
         allocate(group%tsol(n, nsl), stat = z); if (z /= 0) ierr = z
+        allocate(group%trroot(n, nsl), stat = z); if (z /= 0) ierr = z
         allocate(group%gflx(n, nsl), stat = z); if (z /= 0) ierr = z
         allocate(group%latflw(n, nsl), stat = z); if (z /= 0) ierr = z
         allocate(group%zsol(n), stat = z); if (z /= 0) ierr = z

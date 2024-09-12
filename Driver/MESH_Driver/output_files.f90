@@ -1988,8 +1988,6 @@ module output_files
                     call output_files_append_field(fls, shd, ts, VN_CMAS, args, nargs, z)
                 case (VN_TCAN)
                     call output_files_append_field(fls, shd, ts, VN_TCAN, args, nargs, z)
-                case (VN_TRROOT, 'QFC')
-                    call output_files_append_field(fls, shd, ts, VN_TRROOT, args, nargs, z, -1, real(ic%dts))
                 case (VN_GRO)
                     call output_files_append_field(fls, shd, ts, VN_GRO, args, nargs, z)
                 case (VN_DRAINCAN, 'ROFC')
@@ -2083,6 +2081,10 @@ module output_files
                 case (VN_TSOL, 'TBAR', 'TempSoil', 'Temperature_soil_layers')
                     do j = 1, shd%lc%IGND
                         call output_files_append_field(fls, shd, ts, VN_TSOL, args, nargs, z, j)
+                    end do
+                case (VN_TRROOT, 'QFC')
+                    do j = 1, shd%lc%IGND
+                        call output_files_append_field(fls, shd, ts, VN_TRROOT, args, nargs, z, j, real(ic%dts))
                     end do
                 case (VN_GFLX, 'HeatConduction')
                     do j = 1, shd%lc%IGND
