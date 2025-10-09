@@ -2543,14 +2543,22 @@ module mesh_io
             associate (dim_order => field_mapping%mapped_dim_order)
 
                 !> Identify the map.
-                if (dim_order(MAP_ORDER_X) > 0 .and. dim_order(MAP_ORDER_Y) > 0) then
-                    if (allocated(field_mapping%cell_map)) then
-                        field_mapping%cell_map(dim_order(MAP_ORDER_X), :) = vs%grid%from_grid_x
-                        field_mapping%cell_map(dim_order(MAP_ORDER_Y), :) = vs%grid%from_grid_y
+                if (dim_order(MAP_ORDER_X) > 0 .or. dim_order(MAP_ORDER_Y) > 0) then
+                    if (dim_order(MAP_ORDER_X) > 0) then
+                        if (allocated(field_mapping%cell_map)) then
+                            field_mapping%cell_map(dim_order(MAP_ORDER_X), :) = vs%grid%from_grid_x
+                        end if
+                        if (allocated(field_mapping%tile_map)) then
+                            field_mapping%tile_map(dim_order(MAP_ORDER_X), :) = vs%tile%from_grid_x
+                        end if
                     end if
-                    if (allocated(input_field%mapping%tile_map)) then
-                        field_mapping%tile_map(dim_order(MAP_ORDER_X), :) = vs%tile%from_grid_x
-                        field_mapping%tile_map(dim_order(MAP_ORDER_Y), :) = vs%tile%from_grid_y
+                    if (dim_order(MAP_ORDER_Y) > 0) then
+                        if (allocated(field_mapping%cell_map)) then
+                            field_mapping%cell_map(dim_order(MAP_ORDER_Y), :) = vs%grid%from_grid_y
+                        end if
+                        if (allocated(field_mapping%tile_map)) then
+                            field_mapping%tile_map(dim_order(MAP_ORDER_Y), :) = vs%tile%from_grid_y
+                        end if
                     end if
                 else if (dim_order(MAP_ORDER_M) > 0) then
                     if (allocated(field_mapping%cell_map)) then
