@@ -1139,7 +1139,7 @@ module mesh_io
                             call expand_field_list(file_buffer, class_count + 1, ierr)
 
                             !> Add a field for the dimension.
-                            file_buffer(n)%label = trim(vname)
+                            file_buffer(n)%label = trim(dname_m)
                             file_buffer(n)%id = i
                             allocate(file_buffer(n)%field, source = model_variable_int(dat = class_count))
                             n = n + 1
