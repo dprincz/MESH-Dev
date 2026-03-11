@@ -99,12 +99,16 @@ OBJECTS+=	RUNCLASS36_variables.o RUNCLASS36_save_output.o \
 
 # ======================================================================
 # SVS 1.
+# Path to MESH-specific files and surface variable module.
+VPATH += $(DIR_REPO)/LSS_Model/SVS/svs1/src:
+OBJECTS += runsvs_mod_sa_mesh.o
+# SVS-specific code.
+ifneq ($(findstring NO_SVS, $(LSS)), NO_SVS)
 # Paths.
 PHY=$(DIR_REPO)/LSS_Model/SVS/svs1/rpnphy_5.8.3_all
 CHANGES2PHY=$(DIR_REPO)/LSS_Model/SVS/svs1/changes_to_rpnphy
 SVS=$(DIR_REPO)/LSS_Model/SVS/svs1/svs_GEM_v5.8.rc2
-VPATH+=	$(PHY): $(CHANGES2PHY): $(SVS) \
-		$(DIR_REPO)/LSS_Model/SVS/svs1/src:
+VPATH+=	$(PHY): $(CHANGES2PHY): $(SVS)
 # Includes.
 INC_DIRS+=-I$(CHANGES2PHY) -I$(PHY) -I$(SVS)
 # Variables.
@@ -116,8 +120,7 @@ INC_DIRS+=-I$(DIR_REPO)/Modules/librmn/19.7.0/CUSTOM_INCLUDES
 OBJECTS+=	datec.o moduledate.o set_user_lock.o \
 			up2low.o getenvc.o
 # Core routines.
-OBJECTS+=	runsvs_mod_sa_mesh.o runsvs_utils.o \
-			runsvs_init_mesh.o \
+OBJECTS+=	runsvs_utils.o runsvs_init_mesh.o \
 			sfclayer_mod.o sfc_options.o svs_configs.o \
 			inicover_svs.o \
 			svs.o soili_svs.o soil_fluxes.o \
@@ -131,9 +134,9 @@ OBJECTS+=	runsvs_mod_sa_mesh.o runsvs_utils.o \
 			compz0.o difuvd2.o
 # For now, must manually specify one of following:
 OBJECTS+=	inisoili_svs.o
+endif
 # SA_MESH modules.
-OBJECTS+=	runsvs_mesh.o
-
+OBJECTS += runsvs_mesh.o
 
 # ======================================================================
 #reservoir_update (DZTR reservoirs)

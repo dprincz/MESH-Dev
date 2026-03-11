@@ -14,6 +14,7 @@ module runsvs_mesh
     !*  runsvs_mod: Required for 'bus' variable.
     !*  runsvs_utils: Required for 'RUNSVS_OPT' variables and 'surflayerheight' and 'compvirttemp' functions.
     use runsvs_mod
+#ifdef RUNSVS
     use runsvs_utils
 
     !> SVS modules.
@@ -24,6 +25,7 @@ module runsvs_mesh
     !> To re-use 'op' variable.
 !todo: Replace with a generic structure to remove dependency between sub-models.
     use RUNCLASS36_save_output, only: WF_NUM_POINTS, op
+#endif
 
     implicit none
 
@@ -51,6 +53,7 @@ module runsvs_mesh
 !    real bus(bussiz)
     integer bussiz
     real, dimension(:), allocatable :: bus
+#ifdef RUNSVS
     integer datecmc_o, date_f, hour_f
 !    integer datecmc_v, date_v, hour_v, istat, bidon
 !    integer kount
@@ -62,11 +65,12 @@ module runsvs_mesh
 !    real preacc_dly, preacc_hly, preacc_tot, runoff_acc, wsoil_tot, isoil_tot
 !    real bal_in_out, stock, bal_tot, bal_pre, wsoil_ini
 !<<<svs_output
+#endif
 
     !> SVS constants.
     type runsvs_mesh_constants
-        integer :: NLANDCLASS = NCLASS
-        real, dimension(NCLASS) :: Z0DAT = (/ &
+        integer :: NLANDCLASS = 26 !NCLASS
+        real, dimension(26) :: Z0DAT = (/ &
             0.001, 0.001, 0.001, 1.75, 2.0, 1.0, 2.0, 3.0, 0.8, 0.1, &
             0.2, 0.2, 0.1, 0.1, 0.15, 0.15, 0.35, 0.25, 0.1, 0.25, &
             5.0, 0.1, 0.1, 0.1, 1.75, 0.5 /)
@@ -186,6 +190,7 @@ module runsvs_mesh
 
         type(ShedGridParams) :: shd
         type(fl_ids) :: fls
+#ifdef RUNSVS
 
 !#include "options.cdk"
 #include "isbapar.cdk"
@@ -202,10 +207,17 @@ module runsvs_mesh
 !        external incdatr
         external svs, inicover_svs
 !        external inisoili_svs, phyopt_initdata, runsvs_init
+#endif
 
         !> Return if the process is not marked active.
         if (.not. svs_mesh%PROCESS_ACTIVE) then
             return
+#ifndef RUNSVS
+        else
+            call print_error("RUNSVS is enabled but SVS is not linked to the code.")
+            call program_abort()
+        end if
+#else
         else
             call print_new_section("RUNSVS (SVS1) is active.")
             call increase_tab()
@@ -812,6 +824,7 @@ module runsvs_mesh
             end do
         end if
 !<<<svs_output
+#endif
 
     end subroutine
 
@@ -827,6 +840,7 @@ module runsvs_mesh
 
         !> Input variables (optional).
         logical, intent(in), optional :: resume_ts
+#ifdef RUNSVS
 
         !> Local variables.
         integer(kind = 4) datecmc_o_i4
@@ -838,9 +852,11 @@ module runsvs_mesh
         integer iun, j, k, z, ierr
         character(len = DEFAULT_FIELD_LENGTH) code
         logical t
+#endif
 
         !> Return if the process is not marked active.
         if (.not. svs_mesh%PROCESS_ACTIVE) return
+#ifdef RUNSVS
 
         !> Open the resume state file with read access.
 !+        call reset_tab()
@@ -932,6 +948,7 @@ module runsvs_mesh
         if (z /= 0) then
             call print_warning('Errors occurred resuming states from file.')
         end if
+#endif
 
     end subroutine
 
@@ -946,6 +963,7 @@ module runsvs_mesh
 
         type(ShedGridParams) :: shd
         type(fl_ids) :: fls
+#ifdef RUNSVS
 
 !#include "options.cdk"
 #include "isbapar.cdk"
@@ -965,9 +983,11 @@ module runsvs_mesh
         external incdatr
         external svs, inicover_svs
 !        external inisoili_svs, phyopt_initdata, runsvs_init
+#endif
 
         !> Return if the process is not active or if the head node.
         if (.not. svs_mesh%PROCESS_ACTIVE .or. .not. (ipid /= 0 .or. izero == 0)) return
+#ifdef RUNSVS
 
         !> Time-step.
         dt = real(ic%dts)
@@ -1192,6 +1212,7 @@ module runsvs_mesh
             end do
         end if
 !<<<svs_output
+#endif
 
     end subroutine
 
@@ -1229,6 +1250,7 @@ module runsvs_mesh
 
         !> Return if not the head node (only the head node should write output).
         if (.not. ISHEADNODE) return
+#ifdef RUNSVS
 
         !> Open the resume state file with write access.
 !+        call reset_tab()
@@ -1286,6 +1308,7 @@ module runsvs_mesh
         if (z /= 0) then
             call print_warning('Errors occurred saving states to file.')
         end if
+#endif
 
     end subroutine
 

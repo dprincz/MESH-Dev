@@ -31,6 +31,10 @@ default: all
 #   - 'yes' to include debug options and disable compiler optimization.
 
 # ======================================================================
+# Packaging options.
+LSS ?=
+
+# ======================================================================
 # File/object names.
 include makefile.def
 
